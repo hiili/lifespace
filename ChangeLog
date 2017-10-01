@@ -1,0 +1,848 @@
+2012-10-10  Paul Wagner  <>
+
+	* tag: lifespace-0_0_31
+
+	* all: Minor cleanup.
+
+2008-01-18  Paul Wagner  <>
+
+	* plugins/glow: Added some comments about freeglut versions.
+
+	* Control/Controller: Adding the same actor multiple times to the
+	same controller is now allowed.
+
+	* plugins/glow/GLOWViewport (initContext): Call to
+	GlowSubwindow::MakeCurGlutWindow() added before key repeat
+	disabling, just to be sure.
+
+	* plugins/glow (KeyboardUpFunc, SpecialUpFunc): Former moved from
+	GLOWDevice to GLOWViewport. Latter added to fix handling of cursor
+	keys.
+
+	* Renderers/WorldSerialization: bugfix: addSourceObject and
+	addTargetObject methods passed wrong arguments to the recursive
+	self-calls.
+
+	* Renderers/WorldSerialization: Added methods for (de)serializing
+	to (from) a stream given as a method call parameter.
+
+	* plugins/glow: Default window size dropped to 320x240.
+
+2008-01-14  Paul Wagner  <>
+
+	* Renderers/WorldSerialization/WorldSerializer: Bugfix in
+	assertions in Object event handler.
+
+	* Renderers/WorldSerialization: PROP_ACTOR --> PROP_ACTOR_SENSORS
+
+	* Renderers/WorldSerialization/WorldDeserializer: Added.
+
+	* Structures/Object (setName): Implementation moved into cpp
+	file. Added checks for forbidden characters (currently .:/).
+
+	* Graphics/Viewport (~Viewport): Implementation moved into cpp
+	file.
+
+	* plugins/glow: Window resize events are now handled correctly. A
+	full-window GLOWViewport registers itself to the host
+	GLOWDevice as its fullWindowViewport.
+
+	* test/system_tests/WorldDeserializer: Added.
+
+2008-01-11  Paul Wagner  <>
+
+	* test/system_tests/WorldSerializer: renamed from
+	WorldSerialization.
+
+	* Renderers/WorldSerialization/WorldSerializer
+	(serializeActorSensors): Added.
+
+	* Renderers/WorldSerialization (PropertyMask): Propertymasks added.
+
+	* Structures/ODEBallConnector: Added the needed anglerate sensor
+	functionality that is missing from ODE.
+
+	* Structures/ODELocator (activate): worldLocator is now explicitly
+	deleted with delete_shared().
+
+	* Control/Actor: Minor constness changes, added a few getters.
+
+	* test/system_tests/WorldSerialization: JointObject class and two
+	instances added for testing Actor serialization.
+
+2008-01-09  Paul Wagner  <>
+
+	* Renderers/OpenGLRenderer (OpenGLRenderer_constants): Halved the
+	LOD of spheres and capsules.
+
+	* Renderers/WorldSerialization/WorldSerializer (serializeLocator):
+	Basis matrix is now also serialized.
+
+	* Structures (ODEUniversalConnector, ODEBallConnector,
+	ODESliderConnector, ODEAxleConnector), Content/FloatingActor:
+	Initialization changed to conform with the new Actor controls_t
+	and sensors_t types by resizing and filling in the corresponding
+	arrays of the base Actor class.
+
+	* Content/FloatingActor: Moved from Control module into Content
+	module.
+
+	* Content: Module added.
+
+	* Control/Actor (Control): Mode defaults now to ContinuousMode and
+	valid Control objects can be constructed with the default
+	constructor. Mode can be changed later with setMode().
+
+	* Control/Actor: Changed the controls_t and sensors_t types from
+	std::map to std::vector. Size of these arrays are initialized upon
+	Actor construction and can be changed later by directly resizing
+	the corresponding arrays (which are defined with 'protected'
+	visibility..).
+
+	* Control/Actor: Moved implementation into the corresponding cpp
+	file.
+
+2008-01-07  Paul Wagner  <>
+
+	* Renderers/WorldSerialization: New renderer. Simple serialization
+	implemented, deserialization not yet implemented.
+
+	* test/system_tests/WorldSerialization: Added.
+
+	* all: Fixed to work with the newest version uBLAS (boost 1.34.0).
+
+	* Structures (Object, Subspace): Changed the Object deletion
+	convention: grimreaper pass removed, Objects can now be deleted
+	directly (eg, with delete_shared). Note: OE_OBJECT_DYING event is
+	now sent when the object _is already under destruction_!
+
+	* delete_shared: New helper function for deleting shared_ptr
+	-managed objects explicitly and safely.
+
+	* Structures/Subspace (destructor): Automatically deactivate self
+	and all contained Objects if in active state.
+
+	* Structures/Object (lockToHostSpace): Repeated lock operations
+	are no more accumulated but are now considered as an error.
+
+	* Renderers/ODECollisionRenderer: Stop tracking Objects in case
+	they are disconnected from their host Subspace.
+
+	* Doxygen: Minor modifications to graph generation.
+
+	* test: Commented out tests which are not yet updated to use the
+	new shared_ptr calling conventions.
+
+	* test/system_tests/ObjectDeletion: Updated to delete the test
+	object with delete_shared() instead of die().
+
+2007-12-11  Paul Wagner  <>
+
+	* all: Converted lots of raw pointers to shared_ptrs. Most test
+	cases are not yet updated to work with the new conventions.
+
+	* doc: doc dir added and some ancient documents imported into it.
+
+2007-12-06  Paul Wagner  <>
+
+	* test/system_tests/ODELocatorPerformance: New test, stress tests
+	some functionality associated with ODELocators.
+
+	* test/system_tests/Performance: Added some command line args.
+
+	* Renderers/ODECollisionRenderer/ObjectNode: Destructor no more
+	removes the object from the host Collider's ObjectNode list.
+
+	* all: isnan() --> std::isnan().
+
+	* Structures/ODELocator: Moved some stuff into ODELocator.cpp.
+
+2007-11-30  Paul Wagner  <>
+
+	* Structures/ODELocator: Subspace offset bug fixed, finally.
+
+	* Structures/ODEBallConnector: minor fix.
+
+	* test: SubspaceOffsets and Performance system tests added.
+
+2007-11-29  Paul Wagner  <>
+
+	* Doxyfile_user, Doxyfile_devel: updated to Doxygen 1.5.4.
+
+2007-11-28  Paul Wagner  <>
+
+	* all: GE_VSYNC event renamed to GE_TICK.
+
+	* plugins/glow/GLOWDevice: Refresh() call and GE_REFRESH_BEGIN
+	event sending removed from GLOW idle message listener.
+
+	* plugins/glow/GLOWViewport:
+            - GE_TICK events are no more sent on GLOW idle messages.
+            - Automatic refreshing can now be disabled.
+            - Refreshing can be invoked now also with the refresh() method or by sending
+              the viewport a GE_TICK event.
+            - near clipping plane changed from 0.5 to 0.1.
+
+	* Renderers/OpenGLRenderer: bugfix, primary camera scaling was
+	still applied to the projection matrix instead of the modelview
+	matrix. fixed.
+
+	* test/system_tests/GeometryChanging: switched to use direct
+	device -> viewport GE_TICK event listening (for redrawing without
+	auto refresh).
+
+2007-11-26  Paul Wagner  <>
+
+	* Structures/ODEMotorAxisParams: Added. Is currently used in ODEBallConnector
+	and ODEUniversalConnector.
+
+	* Structures/ODEUniversalJoint: Implemented.
+
+	* Structures/ODEBallJoint: Is now motored (ODE AMotor).
+
+	* Structures/Object (getConnectors): non-const connectors getter added.
+
+	* Structures: Updates in connector comments.
+
+	* plugins/glow/GLOWDevice: window title set to the empty string.
+
+	* test: Added tests for the motored ball joint and the universal joint.
+
+2007-11-23  Paul Wagner  <>
+
+	* Control/Actor (getSensor): method added.
+
+2007-11-20  Paul Wagner  <>
+
+	* Graphics/Viewport: OpenGL alpha test disabled.
+
+	* all: Added virtual destructors where needed. Added some 'missing
+	braces around initializers'.
+
+	* Structures/ODELocator: Added support for different inertia
+	shapes (Ball, Cube, CappedCylinder). Mass can be set by defining
+	the density of the inertia shape.
+
+	* Renderers/ODECollisionRenderer: Geometry replacing and removing
+	fixed. Object deletion now also works.
+
+	* test/system_tests/GeometryChanging: Added a test case for
+	replacing and removing Geometries in Objects.
+
+	* test/system_tests/ObjectDeletion: Added a test case for
+	deleting ODE-managed objects.
+
+	* Structures/Event: Listeners are now allowed to remove themselves
+	from the eventhost during event processing.
+
+2007-11-18  Paul Wagner  <>
+
+	* Control/FloatingActor: rotation forces are no more scaled by dt
+	(mouse motion may need to be scaled now if used to control
+	FloatingActors). DEFAULT_AUTOROLL_FORCE scaled accordingly.
+
+2007-11-16  Paul Wagner  <>
+
+	* Renderers/OpenGLRenderer, Graphics/Viewport: Removed
+	setCurrentSubspace() and getCurrentSubspace() functionality from
+	Viewport. The current Subspace is now passed directly in method
+	calls inside the OpenGLRenderer.
+
+	* Renderers/OpenGLRenderer (render(Camera)): scaling is now done
+	with the modelview matrix and mirror scalings are automatically
+	handled correctly (causes polygon direction to be inverted).
+
+	* Renderers/OpenGLRenderer (render(Camera)): recursive cameras do
+	now render only the target object's host subspace instead of the
+	whole host world.
+
+2007-11-15  Paul Wagner  <>
+
+	* test/system_tests/Makefile: commented out all tests that need an
+	erp-patched ODE.
+
+	* plugins/glow/GLOWDevice, Renderers/OpenGLRenderer: Increased
+	default window size and polygon count primitive shapes.
+
+2007-09-20  Paul Wagner  <>
+
+	* Renderers/ODECollisionRenderer/ObjectNode.hpp: Compatibility fix
+	for newer gcc compilers.
+
+2005-03-23  Paul Wagner  <>
+
+	* tag: lifespace-0_0_30
+
+	* test/system_tests/PrecomputedShape: Added a framerate counter.
+
+	* test/system_tests/PrecomputedShape: Tests now also the automatic
+	generation of display lists in OpenGLRenderer.
+
+	* Renderers/OpenGLRenderer: Added automatic generation of display
+	lists.
+
+2005-03-22  Paul Wagner  <>
+
+	* tag: lifespace-0_0_29
+
+	* test/system_tests/PrecomputedShape: A test case for the
+	Precomputed -shape (display lists).
+
+	* Renderers/ODECollisionRenderer (Precomputed): Added support for
+	the Precomputed -shape (is a no-op here).
+
+	* test/system_tests: Minor cleanup (the unused mechMat removed).
+
+2005-03-21  Paul Wagner  <>
+
+	* tag: lifespace-0_0_28
+
+	* Renderers/OpenGLRenderer (Precomputed): Added support for the
+	Precomputed -shape (display lists).
+
+	* Renderers/OpenGLRenderer (PrivateContext): PrivateContext type
+	and map added.
+
+	* Utility/shapes (Precompiled): Precompiled -shape added.
+
+	* Renderers/OpenGLRenderer (Camera): Dispatch check added to
+	Camera rendering.
+
+	* README: Modified the description.
+
+2005-03-14  Paul Wagner  <>
+
+	* tag: lifespace-0_0_27
+
+	* all: Updated the year in copyright notices.
+
+	* README: Shortened the README file.
+
+2005-03-13  Paul Wagner  <>
+
+	* tag: lifespace-0_0_26
+
+	* a minor MIPSpro fix.
+
+2005-03-02  Paul Wagner  <>
+
+	* tag: lifespace-0_0_25
+
+	* portability fix: works now again in MIPSpro.
+
+2005-02-27  Paul Wagner  <>
+
+	* tag: lifespace-0_0_24
+
+	* Utility/Geometry: Added support and events for contact feedback.
+
+	* Structures/EventHostEx: class added.
+
+	* Renderers/ODECollisionRenderer: Implemented contact feedback.
+
+	* Renderers/ODECollisionRenderer: fix: ObjectNodes are now deleted
+	in destructor.
+
+	* Utility/Contact: class added.
+
+	* Utility/Geometry (hostObject): hostObject field added: Geometry
+	objects can from now on belong to only one Object at a time.
+
+	* Utility/Geometry: Bounding sphere information removed.
+
+	* types.hpp (deleter): generic deleter function added.
+
+2005-02-22  Paul Wagner  <>
+
+	* tag: lifespace-0_0_23
+
+	* test/system_tests/RecursiveCameras: testcase for recursive
+	camera rendering.
+
+	* Renderers/OpenGLRenderer: Implemented recursive Camera rendering.
+
+	* Renderers/OpenGLRenderer: bugfix: setting the renderSource or
+	renderTarget to null was not possible.
+
+	* Structures/Camera (scaling): Added the scaling feature.
+
+	* Graphics/Viewport (renderer): Moved the 'renderer' composite
+	field into RenderTarget.
+
+	* Renderers/RenderTarget (renderer): The 'renderer' composite
+	field added and corresponding default (virtual) accessors created.
+
+2005-02-19  Paul Wagner  <>
+
+	* tag: lifespace-0_0_22
+
+	* test/system_tests/ConnectorInhibitCollisions: testcase for the
+	inhibitCollisions flag and the ode<->static-object connection bug.
+
+	* Utility/shapes (CappedCylinder): Added this shape.
+
+	* Structures/Subspace (selfCollide): Added the selfCollide flag
+	(does not work yet, however).
+
+	* Structures/Object (getConnectors): Added this const method and
+	made the connectors_t type public.
+
+	* Structures/ODELocator (gravityEnabled): Added the gravityEnabled
+	flag.
+
+	* Structures/Connector (inhibitCollisions): Added the
+	inhibitCollisions flag.
+
+	* Renderers/OpenGLRenderer, Renderers/ODECollisionRenderer: Added
+	support for the CappedCylinder shape.
+
+	* Renderers/ODECollisionRenderer: bugfix: check for uniform
+	scaling of Spheres did not work always.
+
+	* Renderers/ODECollisionRenderer: Changed the data stored in a
+	geom's user data field from CollisionMaterial to the geom's host
+	Object.
+
+	* Renderers/ODECollisionRenderer: bugfix: connected Objects were
+	collided if one of them was a static Object.
+
+	* Renderers/ODECollisionRenderer (inhibitCollisions): Added
+	support for the Connector's inhibitCollisions flag.
+
+	* all: Comments and minor modifications.
+
+2005-02-04  Paul Wagner  <>
+
+	* tag: lifespace-0_0_21
+
+	* test/system_tests/ODECollisionRenderer_rescan: testcase for
+	object geometry changing.
+
+	* Renderers/ODECollisionRenderer/ObjectNode: Implemented updating
+	when the target object's geometry changes (or is re-set).
+
+	* Renderers/ODECollisionRenderer: Changed a dynamic_cast from
+	reference to pointer cast (this was the last one).
+
+	* Renderers/ODECollisionRenderer (ColliderState, Collider):
+	ColliderState renamed to Collider.
+
+	* tag: lifespace-0_0_20
+
+	* Structures/Object (ObjectEvents): Changed the behaviour of the
+	OE_*_CHANGING object events if a composite object already present
+	is re-set with a setter method: The event is now sent also in this
+	case!
+
+	* Structures/Object (ObjectEvents): Added object event types for
+	composite member modification notifications (but they are not in
+	use yet).
+
+	* Graphics/Viewport: Modified to contain and use an attached
+	Renderer.
+
+	* Structures/Camera: Added inheritance from RenderSource.
+
+	* Renderers/OpenGLRenderer/OpenGLRenderer (destructor): Added
+	context cleanup into destructor.
+
+	* Renderers/OpenGLRenderer/OpenGLRenderer: Implemented the
+	setRenderTarget() and setRenderSource() methods.
+
+	* Renderers/ODECollisionRenderer/ODECollisionRenderer: Added dummy
+	implementations for the setRenderTarget() and setRenderSource()
+	methods.
+
+	* Renderers/ODECollisionRenderer/ColliderState: Changed all
+	dynamic_casts from reference (MIPSpro couldn't take it?!) to
+	pointer casts.
+
+	* Renderers/Renderer (setRenderTarget, setRenderSource, render):
+	Added the setRenderTarget() and setRenderSource() methods. Added
+	the render() method as a pure virtual method.
+
+	* test/system_tests/ODECollisionRenderer: Fixed to work with older
+	gcc:s also.
+
+	* all (documentation): Modifications and additions.
+
+2005-02-01  Paul Wagner  <>
+
+	* tag: lifespace-0_0_19
+
+	* test/system_tests (StaticConnectors): Testcase added.
+
+	* Structures/ODEWorld (setGravityVector, getGravityVector):
+	Methods added.
+
+	* Structures/Connector, Structures/ODEAxleConnector,
+	Structures/ODEBallConnector, Structures/ODEFixedConnector,
+	Structures/ODESliderConnector: Implemented connecting to non-ODE
+	(currently static) objects.
+
+	* ODECollisionRenderer: Implemented collisions with non-ODE
+	(currently static: their motion is not tracked) objects.
+
+	* Structures/Connector, Structures/ODEAxleConnector,
+	Structures/ODEBallConnector, Structures/ODEFixedConnector,
+	Structures/ODESliderConnector: Changed most of the assertions into
+	assert_internal() or assert_user().
+
+	* types.hpp (assert_internal, assert_user): debugging macros added.
+
+	* all: minor modifications.
+
+2005-01-31  Paul Wagner  <>
+
+	* tag: lifespace-0_0_18
+
+	* test/system_tests (ConnectorAligning): testcase added.
+
+	* Structures/ODEAxleConnector, Structures/ODEBallConnector,
+	Structures/ODEFixedConnector, Structures/ODESliderConnector: Added
+	support for Aligning modes.
+
+	* Structures/Connector (AlignMaster, AlignSlave, DontAlign): Added
+	Aligning modes.
+
+	* Renderers/OpenGLRenderer (CustomVisual, CustomOpenGLShape):
+	Added support for CustomVisual and CustomOpenGLShape.
+
+	* Renderers/OpenGLRenderer: Changed all dynamic_casts from
+	reference (MIPSpro couldn't take it?!) to pointer casts.
+
+	* examples: Modified to use the changed GLOWViewport enums.
+
+	* test/system_tests (all): Modified the camera keymap to use the
+	new FloatingActor and GLOWViewport controls.
+
+	* plugins/glow/GLOWViewport (MOUSE_X, MOUSE_Y): Minor changes to
+	enumeration names: MOUSE_X --> MOUSE_DX, MOUSE_Y --> MOUSE_DY.
+
+	* all: Modifications to use the new name shapes.hpp.
+
+	* Utility/Shapes.hpp, Utility/shapes.hpp: Name change to shapes.hpp.
+
+	* Control/FloatingActor: Documentation fixes.
+
+	* all: minor modifications and cleanup.
+
+2005-01-27  Paul Wagner  <>
+
+	* tag: lifespace-0_0_17
+
+	* plugins/glow/GLOWViewport: Changes in key bindings.
+
+	* examples/ODE_basics: Modified to use the create() methods in
+	shapes, and the new control names of FloatingActor.
+
+	* Control/FloatingActor: Reorganized all controls and added the
+	direct setter controls (CTRL_LOC_n, CTRL_BASIS_n, CTRL_VEL_n,
+	CTRL_ROTATION_n).
+
+	* Structures/FloatingActor, Control/FloatingActor: moved to
+	Control module.
+
+	* all: minor modifications.
+
+2005-01-26  Paul Wagner  <>
+
+	* Utility/Shapes: Added the static create() factory methods to all
+	shapes.
+
+	* tag: lifespace-0_0_16
+
+	* Structures/Object: Bugfix.
+
+2005-01-18  Paul Wagner  <>
+
+	* all: a lot of small fixes in comments.
+
+2005-01-17  Paul Wagner  <>
+
+	* tag: lifespace-0_0_15
+
+	* Doxyfile_user, Doxyfile_devel: New modules added.
+
+	* test/system_tests/ODECollisionRenderer: created.
+
+	* Utility/Geometry: Made this a plain, but polymorphic, struct.
+
+	* Integrators/Geometry: Moved into Utility module.
+
+	* Utility/BasicGeometry, Utility/CollisionMaterial: created.
+
+	* Structures/Vector (abs): abs for ublas vectors created.
+
+	* Structures/Vector (makeVector3d): nullary function for making
+	zero-initialized vectors added.
+
+	* Structures/ODELocator (getODEBodyID): made this const.
+
+	* Structures/BasisMatrix (isAxisAligned): method added.
+
+	* Renderers/ODECollisionRenderer: created. Is still quite messy
+	and unfinished and doesn't contain any memory management yet
+	(will leak when deleting Objects).
+
+	* all: minor fixes, todos added.
+
+2005-01-15  Paul Wagner  <>
+
+	* tag: lifespace-0_0_14
+
+	* Graphics/: OpenGL functionality removed completely
+	(applyToGfx() methods).
+
+	* test/system_tests/, examples/: Modified to use the new Visual
+	construction syntax by using the Utility shapes.
+
+	* Renderer/OpenGLRenderer: No longer uses
+	Viewport::getCurrentViewport() or Viewport::setCurrentViewport().
+
+	* Graphics/Visual, Renderers/OpenGLRenderer: Started to use the
+	generic Utility shapes instead of Graphics shapes.
+
+	* Graphics/Graphics_constants: removed.
+
+	* Renderer/OpenGLRenderer_constants: added.
+
+	* Graphics/Shape, Graphics/Shapes/: Removed (these were replaced
+	with the Utility shapes).
+
+	* Utility/Utility_constants, Utility/Shapes (Shape, Scaled,
+	Located, Union, Sphere, Cube, Basis): added.
+
+	* Utility: Module added.
+
+	* Graphics/Viewport/Gfx, Renderers/OpenGLRenderer/FrameState: Gfx
+	functionality moved into FrameState.
+
+	* all: Minor fixes.
+
+2005-01-13  Paul Wagner  <>
+
+	* tag: lifespace-0_0_13
+
+	* Structures/Subspace (objects_t): Object list typedef added.
+
+	* Structures/Subspace (getEnvironment): method created.
+
+	* Structures/Object: Inheritance from enable_get_weak_ptr added.
+
+	* all: Started using the OpenGLRenderer: some temporary friend
+	declarations added, all applyToGfx() methods disabled (with
+	assert(false)) and their functionality moved into the
+	OpenGLRenderer.
+
+	* Renderers/OpenGLRenderer: created. Functionality taken from all
+	applyToGfx() methods.
+
+	* Direction (Locator, types.hpp): Enum moved from Locator to
+	types.hpp.
+
+	* types.hpp (sptr): custom deleter version added.
+
+	* types.hpp (null_deleter, enable_get_weak_ptr): created.
+
+	* Renderers: Module created.
+
+	* all: minor changes, some todos added.
+
+2005-01-10  Paul Wagner  <>
+
+	* types.hpp (sptr): Created the sptr conversion function.
+
+2005-01-09  Paul Wagner  <>
+
+	* test/system_tests/Makefile: Disabled some outdated testcases.
+
+	* test/Makefile: Disabled some outdated testcases.
+
+	* INSTALL: Wrote the install instructions.
+
+	* tag: lifespace-0_0_12
+
+2005-01-08  Paul Wagner  <>
+
+	* test/system_tests/FixedJoint: created a testcase for
+	ODEFixedConnector.
+
+	* test/system_tests/BallJoint: created a testcase for
+	ODEBallConnector.
+
+	* all: started using the erp-patched ODE ode-0.5_erppatch1.
+
+	* Structures/ODEFixedConnector: created.
+
+	* Structures/ODEBallConnector: created.
+
+	* all/Makefile: Started using the DEFS_glow variable.
+
+	* Makefile.common: Added the DEFS_glow variable.
+
+	* all: various minor modifications and fixes, some todos added.
+
+2005-01-06  Paul Wagner  <>
+
+	* test/system_tests/SliderActor: created a testcase for
+	ODESliderConnector.
+
+	* Structures/ODEAxleConnector: dHingeJoint inheritance made public.
+
+	* Structures/ODESliderConnector: created.
+
+	* all: todos added.
+
+	* Structures/ODEAxleConnector (connect): Added a fix to avoid an
+	ODE bug (when setting joint stops).
+
+2004-12-12  Paul Wagner  <>
+
+	* all: portability fixes.
+
+	* Makefile.common: portability fixes. IRIX added.
+
+	* Structures/ODEWorld: portability fixes.
+
+	* Graphics/constants.cpp, Structures/constants.cpp, all: Moved all
+	static member initializions into constant.cpp files.
+
+	* Makefile.common: Created and stuff moved into it.
+
+2004-11-30  Paul Wagner  <>
+
+	* tag: lifespace-0_0_11
+
+	* Control/Actor (makeControlProxy): Method created.
+
+	* Control/Actor, Control/Controller: KeyMap functionality moved
+	from Actor to Controller and renamed to ControlMap.
+
+	* Control/Controller: Class added.
+
+	* Graphics/Shapes/Located: A new constructor added and a
+	modification made to make it work like Scaled.
+
+	* Control/ (Actor, Controller): Control module created and all
+	control stuff moved into it.
+
+2004-11-28  Paul Wagner  <>
+
+	* tag: lifespace-0_0_10
+
+	* plugins/glow/GLOWDevice (OnMessage): Updated the Graphics Event
+	message sending.
+
+	* Structures/World (processEvent): Parameterized the event type
+	that triggers timestepping (default set to GE_REFRESH_BEGIN,
+	cannot be changed currently).
+
+	* Graphics/Viewport (applyCameraToGfx): Moved the setting of the
+	current viewport pointer into Viewport::applyCameraToGfx().
+
+	* plugins/glow/GLOWViewport (OnBeginPaint, OnEndPaint): Moved the
+	setting of the current viewport pointer into
+	Viewport::applyCameraToGfx().
+
+2004-11-22  Paul Wagner  <>
+
+	* Doxyfile_user, Doxyfile_devel: Added the glow plugin.
+
+2004-11-21  Paul Wagner  <>
+
+	* tag: lifespace-0_0_9
+
+	* Makefile (all): Some portability fixes to makefiles.
+
+2004-11-20  Paul Wagner  <>
+
+	* tag: lifespace-0_0_8
+
+	* plugins/plugins.hpp: added. Common header for all plugins.
+
+	* plugins/glow: created. Moved all GLOW functionality from the
+	Graphics module to here.
+
+	* test/system_tests (all): Modified to use the new division
+	between abstract graphics devices and the GLOW Toolkit.
+
+	* examples/ODE_basics: Modified to use the new division between
+	abstract graphics devices and the GLOW Toolkit.
+
+	* Utility/Geometry, Utility/CSGUnion: added. Preparations for
+	integrating a collision detector to Lifespace.
+
+	* Graphics/types.hpp: added. Common types for the graphics system.
+
+	* Graphics/Graphics.hpp: GLOW notes removed.
+
+	* Structures/Actor, Structures/FloatingActor: GLOW dependencies
+	removed.
+
+	* Structures/World: Modifications made to reflect the the Graphics
+	Device abstraction.
+
+2004-11-19  Paul Wagner  <>
+
+	* Graphics/Device, Graphics/Viewport (setCurrentViewport,
+	getCurrentViewport, setCurrentSubspace, getCurrentSubspace): Made
+	these thread-safe with pthread mutexes.
+
+	* Graphics/Window, Graphics/Device, Graphics/Viewport: Separated
+	the GLOW implementation from the class into the GLOW plugin and
+	made these classes abstract base classes.
+
+	* Makefile (all): Dependency generation rules updated.
+
+2004-11-18  Paul Wagner  <>
+
+	* Makefile (all): Modifications to cleanup targets.
+
+	* tag: lifespace-0_0_7
+
+	* all (src, plugins, test, examples): New directory structure
+	finished. All makefiles and include statements changed
+	accordingly. Plugin dirs are still almost empty.
+
+	* test, examples (Makefile): Makefiles created for all tests and
+	examples and their main dirs.
+
+	* test: unit and system tests split into separate subdirs.
+
+2004-11-10  Paul Wagner  <>
+
+	* all: All sources moved under the src directory and a main
+	Makefile created.
+
+	* tag: lifespace-0_0_6
+
+2004-11-09  Paul Wagner  <>
+
+	* Structures/ODELocator (prepare): Drag forces implemented.
+
+	* Graphics/Environment (undoFromGfx): Minor fix: don't pop zero
+	lights from Viewport::Gfx
+
+	* tag: lifespace-0_0_5
+
+2004-11-07  Paul Wagner  <>
+
+	* Structures/Object (Subspace, Camera, FloatingActor): Made all Object
+	inheritances virtual.
+
+	* Graphics/Viewport (actor, actors): Added support for multiple
+	connected Actor objects.
+
+	* Structures/Object: Some object events added (OE_LOCATOR_CHANGED,
+	OE_VISUAL_CHANGED, OE_GEOMETRY_CHANGED, OE_HOSTSPACE_CHANGED)
+
+2004-11-06  Paul Wagner  <>
+
+	* Structures/Connector, Structures/ODEAxleConnector
+	(ODEAxleConnector): Moved the ODEAxleConnector class to its own
+	file. Makefile and Structures.hpp also modified.
+
+2004-11-06  Paul Wagner  <>
+
+	* tag: lifespace-0_0_4

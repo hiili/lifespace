@@ -1,0 +1,47 @@
+/**
+
+@page rationales Rationales
+
+\section Renderers
+
+\subsection All rendering functionality is kept out from the world hierarchy
+
+The other alternative for implementing renderer connectivity would be to use
+renderer-specific derived classes in the world Objects, and to have them manage
+the renderer synchronization, updating etc.. This was the original approach
+with graphics, and all subclasses of Visual (and subclasses of Materials and
+Shapes through BasicVisual) had an applyToGfx() method which contained the
+classes OpenGL functionality.
+
+Currently all renderer functionality is kept out from the world hierarchy.
+
+Pros:
+  - Multiple renderers of the same type can be used. For example, the audio can
+    be rendered simultaneusly to Mustajuuri and OpenAL rendering targets. This
+    would be impossible if the world Objects should contain renderer-specific
+    derived classes (MJSound instead of a plain Sound object, for example).
+  - The world hierarchy stays clean, simple and easy to read: only the
+    essential abstract properties of the objects are present and all technical
+    details are hidden into the renderers.
+
+Cons:
+  - Dynamic and efficient behaviour is hard to achieve with stateful renderers:
+
+    structural changes of the world hierarchy, structural changes inside
+    composite members of Objects, as well as changes in attributes of Objects'
+    composite members must be detected by a stateful renderer to keep the
+    internal data structures in sync. Possible solutions and their weaknesses:
+      - Brute force: read though the entire world hierarchy on each render
+        pass. This works and provides full dynamicity, but is very slow.
+      - Message passing: entities in the world hierarchy send change
+        notifications to all listening renderers when they or their content
+        changes.
+      - Edit mode: the world hierarchy and/or composites inside Objects are
+        locked, and must be unlocked for editing. When finishing editing and
+        locking again, a single common change notification is sent from the
+        root of the edited branch. This has problems if some composite members
+        are used in multiple places simultaneously and they are edited from
+        somewhere where their places of occurence in the world hierarchy is not
+        known.
+
+*/

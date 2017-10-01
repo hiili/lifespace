@@ -1,0 +1,134 @@
+/**
+
+@page conventions Conventions
+
+\section On using shared pointers
+
+Design goals:
+  - Objects can be safely and explicitly deleted: it is checked with an
+    assertion that the deletion will not create a dangling pointer.
+  - Unused objects are automatically deleted when the last reference to them is
+    reset.
+
+Included target areas:
+  - World hierarchy objects and their component objects: World, Subspace,
+    Object, Visual, Locator, Geometry, Connector, Actor, all shapes, ...
+
+Excluded areas:
+  - Objects that typically exist for the whole lifetime of the program: Device,
+    Viewport, ... (why?)
+
+Implementation:
+  - All objects are created, managed and passed via boost shared pointers
+    (boost::shared_ptr).
+  - Explicit object deletion: a separate helper function that takes a
+    shared_ptr, checks (asserts?) its uniqueness and resets it, thus causing
+    the referenced object to be deleted.
+  - Typical usage:
+    \code
+      shared_ptr<ODELocator> ballLocator( new ODELocator() );
+      ballLocator->setLoc( makeVector3d( 0.0, 1.0, -3.0 ) );
+      
+      shared_ptr<BasicVisual> ballVisual
+      ( new BasicVisual( shapes::Ball:create( 1.0 ),
+                         redMaterial ) );
+      
+      shared_ptr<Object> ball( new Object() );
+      ball->setLocator( ballLocator );
+      ball->setVisual( ballVisual );
+    \endcode
+    or
+    \code
+      shared_ptr<Object> ball( new Object() );
+      ball->setLocator( sptr( new ODELocator( makeVector3d(...) )));
+      ball->setVisual( sptr( new BasicVisual( sptr( new shapes::Ball( 1.0 ) ),
+                                              redMaterial ) ));
+    \endcode
+    or
+    \code
+      shared_ptr<Object> ball( Object::create() );
+      ball->setLocator( ODELocator::create( makeVector3d(...) ));
+      ball->setVisual( BasicVisual::create( shapes::Ball::create( 1.0 ),
+                                            redMaterial ) );
+    \endcode
+
+  - Pros:
+      - Null pointer safety.
+      - "Forgotten" references are detected upon explicit deletion.
+
+  - Cons:
+      - Client code clutter. What would normally be something like this:
+        \code
+          Object cube( ... );
+          world.addObject( &cube );
+    
+          Object * ball = new Object( ... );
+          world.addObject( ball );
+        \endcode
+        Becomes something like this:
+        \code
+          shared_ptr<Object> ball( new Object( ... ) );
+          world.addObject( ball );
+        \endcode
+        Not bad, but..
+      - Objects \em must be managed with shared pointers, because otherwise
+        shared_from_this() wouldn't work. A possible workaround could be to
+        somehow include one shared_ptr -like thing in the object itself, which
+        would probably lead to weak_ptr or intrusive_ptr -like
+        solutions. However, enforced use of shared_ptrs may be a good thing
+        also..
+      - Cyclic references prevent auto-deletion.
+      - How shared_from_this() works with multiple inheritance?
+
+Current situation:
+  - Somewhat messy: shared_ptr:s are used in most places, but references and
+    raw pointers still appear in many places where they should not..
+
+
+\subsection (old stuff: Pointers, references and smart pointers)
+
+Almost all non-pod method argument and return types are either actual values,
+const references, or boost::shared_ptrs. Raw pointers are avoided most of the
+time. Usual semantics:
+
+  - value (usually in return types): Quite obvious, a new unique instance of
+    the type has been created and filled. It should be independent from the
+    source object's state (it is not a shallow copy of an internal data
+    structure, etc.) and thus be valid even if the source object gets
+    "updated", modified or even deleted.
+
+  - const reference (as a method argument): passes in something to be used
+    during the call, but not to be stored inside the target object. Could
+    be, for example, a reference object or a set of parameters for a
+    constructor.
+
+  - const reference (as a return type): the returned reference gives read
+    access to the current state of the requested property, and is valid only
+    until the next time the source object is "updated" somehow.
+
+ shared_ptr
+   - with truly shared objects:
+   - with "unique" objects and "references" (sptrs) to them, (null-pointer
+     safety): f.ex. Camera::targetObject ... (does weak_ptr fit here somehow?)
+   - shared_ptr as return type: result should not be kept longer that a ref
+     would (then why is it not a ref?), result might be a temp f.ex...
+   - weak_ptr as return type: result is for long-term storing and validity
+     should be checked before use (catch the bad weak_ptr
+     exception). (?re-think this someday?) (should the Object composite member
+     getters for example converted to return weak_ptrs?)
+
+"secondary back-links" are still done with raw pointers
+(f.ex. Object::hostSpace pointer, which is a secondary back-link because
+subspaces always know and own their child objects and can check their existence
+in their destructor)
+
+
+
+
+\section Dynamic casting
+
+All dynamic casts are done as pointer casts (raw or shared). Dynamic reference
+casts are avoided due to a serious performance-related problem with a
+particular MIPSpro compiler.
+
+*/

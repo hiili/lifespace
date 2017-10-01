@@ -1,0 +1,69 @@
+Installing the Lifespace Simulator
+----------------------------------
+
+Dependencies
+------------
+
+Boost (http://www.boost.org/). Only headers are needed. Tested with
+boost-1.50.0.
+
+Open Dynamics Engine (http://ode.org/). Tested with ode-0.8 using double
+precision floats.
+
+GLOW (http://glow.sourceforge.net/). Tested with glow-1.0.4.
+
+OpenGLUT or freeglut (http://openglut.sourceforge.net/,
+http://freeglut.sourceforge.net/). Tested with freeglut-r738. There are
+issues with certain versions of freeglut. See the glow plugin reference
+manual for details. 
+
+Installing
+----------
+
+1) Run 'make' in this directory (must be GNU make!). This will compile
+   everything (the main library, plugins, tests and examples) and put
+   the main library into the include/ and lib/ directories under this
+   directory. Other available targets:
+     lib               compile the main library and put it into lib/
+                       and include/ dirs.
+     plugin_glow       compile the GLOW Toolkit plugin and put it into
+                       lib/ and include/ dirs.
+     test              compile all testcases in the test/ dir.
+     examples          compile all examples in the examples/ dir.
+     clean             remove all unneeded temporary files.
+     cleantest         remove the compiled testcases and temporary files.
+     cleanexamples     remove the compiled examples and temporary files.
+     cleanbin          remove all compiled libraries and headers
+                       (deletes the lib/ and include/ dirs).
+     cleanall          cleanup everything.
+
+   If yoy get the error message "Unrecognized platform id: ..." then
+   check the file Makefile.common in this directory, set the platform
+   id there manually to the closest supported (see comments in that
+   file for details) and try to adjust all relevant variables to match
+   your environment.
+
+2) Add or copy the include/ dir into your include path and lib/ dir
+   into your library path.
+
+3) Using the library:
+   Include the main library in your program:
+     #include <lifespace/lifespace.hpp>
+     using namespace lifespace;   // optional, of course
+   Include needed plugins. For example:
+     #include <lifespace/plugins/glow.hpp>
+     using namespace lifespace::plugins::pglow;   // optional
+   Link against needed libraries. For example:
+     g++ ... -llifespace -llifespaceglow -lode -lglow -lGL ...
+     (see the makefiles in the examples/ dir for reference)
+
+Notes
+-----
+
+1) When compiling the final app, the Open Dynamics Engine library and
+headers that are used must have the same configuration (float/double,
+debug/release) which was used when compiling the lifespace library!
+
+2) You _can_ use the old GLUT instead of the suggested newer
+replacements, but expect instability and odd behaviour with some input
+functionality.
