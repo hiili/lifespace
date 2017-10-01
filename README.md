@@ -1,5 +1,7 @@
-Lifespace Simulator, Copyright (C) 2004-2005 Paul J. Wagner
------------------------------------------------------------
+Lifespace Simulator
+===================
+
+_Copyright (C) 2004-2005 Paul J. Wagner_
 
 version 0.0.31
 
@@ -15,9 +17,9 @@ probably of no general use as more mature alternatives exist, but is made
 available for the curious.
 
 For publicly available client software that uses the simulator or is built on
-some early incarnation of it, see <a href="https://github.com/hiili/tie">TIE</a>
+some early incarnation of it, see [The Incredible Environment](http://iki.fi/paul.wagner/projects/tie/)
 (a virtual reality application developed during a software project course) and
-<a href="http://iki.fi/paul.wagner/projects/otacombat/">OtaCombat</a> (a game
+[OtaCombat](http://iki.fi/paul.wagner/projects/otacombat/) (a game
 developed during an artificial intelligence course).
 
 Project homepage:
