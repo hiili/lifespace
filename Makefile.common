@@ -1,0 +1,118 @@
+# Common definitions for all makefiles
+
+
+# Supported platforms ---------------------------
+platforms       := Cygwin Linux IRIX
+
+
+# Resolve the platform --------------------------
+
+UNAME           := $(shell uname)
+ifneq (,$(findstring CYGWIN,$(UNAME)))
+UNAME           := $(shell uname -o)
+endif
+
+# NOTE: you can override the platform selection by setting the UNAME variable
+# from the command line, or with the following line:
+#UNAME := <id>
+
+UNAME := $(strip $(foreach id,$(platforms),$(findstring $(id),$(UNAME))))
+ifeq (,$(UNAME))
+$(error Unrecognized platform id: "$(UNAME)" \
+    (but your platform might well be supported, check this makefile))
+endif
+
+
+# Shell and commands ----------------------------
+SHELL                   := bash
+
+CXX_Cygwin              := g++
+CXX_Linux               := g++
+CXX_IRIX                := CC -n32
+
+DEPCC_Cygwin            := g++
+DEPCC_Linux             := g++
+DEPCC_IRIX              := g++
+
+AR_CMD_Cygwin           := ar crs
+AR_CMD_Linux            := ar crs
+AR_CMD_IRIX             := CC -ar -o
+
+UN_AR_CMD_Cygwin        := ar x
+UN_AR_CMD_Linux         := ar x
+UN_AR_CMD_IRIX          := ar x
+
+
+# Dirs ------------------------------------------
+incdirs_common          := 
+libdirs_common          := 
+
+
+# Libs ------------------------------------------
+libs_opengl_Cygwin      := opengl32 glu32
+libs_opengl_Linux       := GL GLU Xi Xmu X11
+libs_opengl_IRIX        := GL GLU Xi Xmu X11
+
+libs_glut_Cygwin        := glut32
+libs_glut_Linux         := glut
+libs_glut_IRIX          := glut
+
+libs_std_Cygwin         := m stdc++
+libs_std_Linux          := pthread m stdc++
+libs_std_IRIX           := pthread m
+
+
+# Defines ---------------------------------------
+DEFS_common_all         := \
+    # NDEBUG
+DEFS_common_Cygwin      :=
+DEFS_common_Linux       :=
+DEFS_common_IRIX        := BOOST_UBLAS_NO_MEMBER_FRIENDS
+
+DEFS_glow_all           := NODEBUG
+DEFS_glow_Cygwin        := \
+    GLOW_PLATFORM_LINUX \
+    GLOW_PLATFORM_LITTLEENDIAN
+DEFS_glow_Linux         := \
+    GLOW_PLATFORM_LINUX \
+    GLOW_PLATFORM_LITTLEENDIAN
+DEFS_glow_IRIX          := \
+    GLOW_PLATFORM_IRIX \
+    GLOW_PLATFORM_IRIX64 \
+    GLOW_PLATFORM_BIGENDIAN
+
+
+# Flags -----------------------------------------
+CPPFLAGS_common_Cygwin  := -Wall -g #-O2
+CPPFLAGS_common_Linux   := -Wall -g #-O2
+CPPFLAGS_common_IRIX    := -woff 1682 -g #-O2
+
+LINKFLAGS_common_Cygwin := # -mwindows -e _mainCRTStartup
+LINKFLAGS_common_Linux  :=
+LINKFLAGS_common_IRIX   := -v
+
+
+
+
+
+
+
+
+### No changes from here on!
+### ------------------------------------------------------------- ###
+
+CXX                     := $(CXX_$(UNAME))
+DEPCC                   := $(DEPCC_$(UNAME))
+AR_CMD                  := $(AR_CMD_$(UNAME))
+UN_AR_CMD               := $(UN_AR_CMD_$(UNAME))
+CXX                     := $(CXX_$(UNAME))
+
+libs_opengl             := $(libs_opengl_$(UNAME))
+libs_glut               := $(libs_glut_$(UNAME))
+libs_std                := $(libs_std_$(UNAME))
+
+DEFS_common             := $(DEFS_common_all) $(DEFS_common_$(UNAME))
+DEFS_glow               := $(DEFS_glow_all) $(DEFS_glow_$(UNAME))
+
+CPPFLAGS_common         := $(CPPFLAGS_common_$(UNAME))
+LINKFLAGS_common        := $(LINKFLAGS_common_$(UNAME))

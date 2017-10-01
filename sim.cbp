@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sim" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<MakeCommands>
+			<Build command="$make -j2 -f $makefile $target" />
+			<CompileFile command="$make -f $makefile $file" />
+			<Clean command="$make -f $makefile clean$target" />
+			<DistClean command="$make -f $makefile distclean$target" />
+		</MakeCommands>
+		<Build>
+			<Target title="sim">
+				<Option output="sim" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="./sim/" />
+				<Option object_output="./" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<MakeCommands>
+					<Build command="$make -j2 -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+				</MakeCommands>
+			</Target>
+			<Target title="lib">
+				<Option output="./lib/libsim.a" prefix_auto="1" extension_auto="0" />
+				<Option working_dir="./src/" />
+				<Option object_output="./" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<MakeCommands>
+					<Build command="$make -j2 -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+				</MakeCommands>
+			</Target>
+			<Target title="test">
+				<Option output="./test/__dummy" prefix_auto="1" extension_auto="0" />
+				<Option working_dir="./" />
+				<Option object_output="./" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<MakeCommands>
+					<Build command="$make -j2 -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="sim/main.cpp" />
+		<Unit filename="src/Floor/Floor.cpp" />
+		<Unit filename="src/Floor/Floor.hpp" />
+		<Unit filename="src/Leg/EndEffector.cpp" />
+		<Unit filename="src/Leg/EndEffector.hpp" />
+		<Unit filename="src/Leg/Leg.cpp">
+			<Option target="lib" />
+		</Unit>
+		<Unit filename="src/Leg/Leg.hpp">
+			<Option target="lib" />
+		</Unit>
+		<Unit filename="src/Leg/LowerPart.cpp" />
+		<Unit filename="src/Leg/LowerPart.hpp" />
+		<Unit filename="src/Leg/UpperPart.cpp" />
+		<Unit filename="src/Leg/UpperPart.hpp" />
+		<Unit filename="src/RecPlaySystem/RecPlaySystem.cpp" />
+		<Unit filename="src/RecPlaySystem/RecPlaySystem.hpp" />
+		<Unit filename="src/resources.hpp" />
+		<Unit filename="test/leg_basics/main.cpp">
+			<Option target="test" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
